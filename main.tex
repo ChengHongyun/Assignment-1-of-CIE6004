@@ -1,0 +1,236 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Packages
+\documentclass[10pt, a4paper]{article}%文件类型article，正文字号10pt
+\usepackage[UTF8]{ctex}%解码中文
+\usepackage[top=3cm, bottom=4cm, left=3.5cm, right=3.5cm]{geometry}%页面布局
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd, fancyhdr, color, comment, graphicx, environ}
+%fancyhdr：页眉页脚
+%graphicx：插图
+%amsthm：American Mathematical Society (AMS) Style theorem typesetting 定理环境
+%amssymb：公式符号 American Mathematical Society (AMS) Style Symbols
+%amsmath：数学工具 AMS mathematical facilities
+%amscd:communicative diagram
+%color:提供对色彩的支持
+%comment：插入评论支持
+%environ： creating new environments
+\usepackage{float}%浮动体
+\usepackage{mathrsfs}%RSFS：Ralph Smith's Formal Script font（The fonts provide uppercase ‘formal’ script letters for use as symbols in scientific and mathematical typesetting ）
+\usepackage[math-style=ISO]{unicode-math}%a complete implementation of unicode maths for XeLaTeX and LuaLaTeX
+\usepackage{lastpage}%Reference last page for Page N of M type footers
+\usepackage[dvipsnames]{xcolor}%Driver-independent color extensions
+\usepackage[framemethod=TikZ]{mdframed}%Framed environments that can split at page boundaries（PStricks or TikZ）
+\usepackage{enumerate}%Enumerate with redefinable labels
+\usepackage[shortlabels]{enumitem}%Control layout of itemize, enumerate, description
+\usepackage{indentfirst}%Indent first paragraph after section header
+\usepackage{listings}%Typeset source code
+\usepackage{sectsty}%help change the style of any or all of sectional headers
+\usepackage{thmtools}% commonly-needed support for typesetting theorems
+\usepackage{shadethm}% produce a theorem statement in a shaded box
+\usepackage{hyperref}% support for hypertext
+\usepackage{setspace}%Set space between lines
+\setmathfont{TeX Gyre Termes Math}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=purple,
+    filecolor=magenta,      
+    urlcolor=purple,
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Environment setup
+\mdfsetup{skipabove=\topskip,skipbelow=\topskip}%控制mdframed的区域和其他部分的间距
+\mdfdefinestyle{theoremstyle}{%define theorem style
+linecolor=black,
+linewidth=1pt,%
+frametitlerule=true,%
+frametitlebackgroundcolor=gray!20,
+innertopmargin=\topskip,
+}
+\mdtheorem[style=theoremstyle]{Problem}{Problem}
+\newenvironment{Solution}{\textbf{Solution.}}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Fill in the appropriate information below
+\newcommand\course{CIE6004}                            % <-- course name   
+\newcommand\hwnumber{1}                                 % <-- homework number
+\newcommand\Information{程雨桐\\222010519\\Mphil in CIE} % <-- personal information
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Page setup
+\pagestyle{fancy}
+\headheight 35pt
+\lhead{\today}%左页眉是今天的日期
+\rhead{\includegraphics[width=2cm]{icon.png}}%右页眉是学校logo
+\lfoot{}%左页尾
+\pagenumbering{arabic}%页数为阿拉伯数字
+\cfoot{\thepage\ of \pageref*{LastPage}}%中心页尾是数码，格式为“## of ##”
+\rfoot{}%右页尾
+\headsep 1.2em%em. roughly the width of an 'M' (uppercase) in the current font (it depends on the font used) 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Add new commands here
+\renewcommand{\baselinestretch}{1.25}
+\renewcommand{\labelenumi}{\alph{enumi})}
+\newcommand{\norm }[1]{\left\lVert#1\right\rVert}   
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\NN}{\mathbb N}
+\newcommand{\PP}{\mathbb P}
+\DeclareMathOperator{\Mod}{Mod} 
+\renewcommand\lstlistingname{Algorithm}
+\renewcommand\lstlistlistingname{Algorithms}
+\def\lstlistingautorefname{Alg.}
+\newtheorem*{theorem}{Theorem}
+\newtheorem*{lemma}{Lemma}
+\newtheorem{case}{Case}
+\newcommand{\assign}{:=}
+\newcommand{\infixiff}{\text{ iff }}
+\newcommand{\nobracket}{}
+\newcommand{\backassign}{=:}
+\newcommand{\tmmathbf}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\tmop}[1]{\ensuremath{\operatorname{#1}}}
+\newcommand{\tmtextbf}[1]{\text{{\bfseries{#1}}}}
+\newcommand{\tmtextit}[1]{\text{{\itshape{#1}}}}
+
+\newenvironment{itemizedot}{\begin{itemize} 
+\renewcommand{\labelitemi}{$\bullet$}
+\renewcommand{\labelitemii}{$\bullet$}
+\renewcommand{\labelitemiii}{$\bullet$}
+\renewcommand{\labelitemiv}{$\bullet$}
+}{\end{itemize}}
+
+\catcode`\<=\active \def<{
+\fontencoding{T1}\selectfont\symbol{60}\fontencoding{\encodingdefault}}
+\catcode`\>=\active \def>{
+\fontencoding{T1}\selectfont\symbol{62}\fontencoding{\encodingdefault}}
+\catcode`\<=\active \def<{
+\fontencoding{T1}\selectfont\symbol{60}\fontencoding{\encodingdefault}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin now with title page!
+\begin{document}
+\begin{titlepage}
+    \begin{center}
+        \vspace*{3cm}
+            
+        \Huge
+        \textbf{Assignment \hwnumber \ }
+            
+        \vspace{1cm}
+        \huge
+        
+        Reproduction of Poisson Image Editing
+            
+        \vspace{1.5cm}
+        \Large
+            
+        \textbf{\Information \ }                      % <-- author
+        
+            
+        \vfill
+        
+        A \course \ Homework Assignment
+            
+        \vspace{1cm}
+            
+        \includegraphics[width=1\textwidth]{logo.png}
+        \\
+        
+        \Large
+        
+        \today
+            
+    \end{center}
+\end{titlepage}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Start the assignment now!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% New problem
+\newpage
+
+\subsubsection*{The following will give you an overview of what you can do with this template.}
+
+\begin{Problem}
+Type your problem here. \\
+Personally I recommend Mathpix (https://mathpix.com/), which can easily export your ProblemBook.pdf to \LaTeX \ code.
+\end{Problem}
+
+\begin{Solution}
+Write your solution here.
+
+Example of equations. $x+1=2$. Or
+$$x-1=0$$
+
+Example of a list of equations.
+\begin{align*}
+    x &= 1\\
+    y &= 2
+\end{align*}
+
+Example of a matrix.
+$$\begin{pmatrix}1&0\\0&1\end{pmatrix}$$
+
+Example of a lemma.
+\begin{lemma}
+    This is a lemma.
+\end{lemma}
+
+Example of a proof.
+\begin{proof}
+    Write your proof here.
+\end{proof}
+
+Example of including a picture.
+\begin{center}
+    \includegraphics[width = 4cm]{icon.png}
+\end{center}
+
+Example of referring to a piece of code.
+\lstinputlisting[language = python]{Program Solution.py}
+
+Example of a table.
+\begin{equation*}\begin{tabular}{ c c c }
+                & Mean          & SD \\ 
+     Fall 2077  & 7.046512      & 1.714552 \\  
+     Fall 1977  & 9.102941      & 1.568919
+\end{tabular}\end{equation*}
+
+Overall, this is a quite basic template for assignments, and above are only some basic features. I included enough packages and set a few environments. You may modify them or add features to fit your personal preference. Enjoy using it!
+\end{Solution}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Complete the assignment now
+\end{document}
