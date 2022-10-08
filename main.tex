@@ -1,7 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Packages
 \documentclass[10pt, a4paper]{article}%文件类型article，正文字号10pt
-\usepackage[UTF8]{ctex}%解码中文
 \usepackage[top=3cm, bottom=4cm, left=3.5cm, right=3.5cm]{geometry}%页面布局
 \usepackage{amsmath,amsthm,amsfonts,amssymb,amscd, fancyhdr, color, comment, graphicx, environ}
 %fancyhdr：页眉页脚
@@ -28,6 +27,10 @@
 \usepackage{shadethm}% produce a theorem statement in a shaded box
 \usepackage{hyperref}% support for hypertext
 \usepackage{setspace}%Set space between lines
+\usepackage{lipsum}
+\usepackage{appendix}
+\usepackage{etoc}
+\usepackage{titlesec}
 \setmathfont{TeX Gyre Termes Math}
 \hypersetup{
     colorlinks=true,
@@ -80,13 +83,13 @@ innertopmargin=\topskip,
 %% Fill in the appropriate information below
 \newcommand\course{CIE6004}                            % <-- course name   
 \newcommand\hwnumber{1}                                 % <-- homework number
-\newcommand\Information{程雨桐\\222010519\\Mphil in CIE} % <-- personal information
+\newcommand\Information{Cheng Yutong\\222010519\\Mphil in CIE} % <-- personal information
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Page setup
 \pagestyle{fancy}
-\headheight 35pt
+\headheight 60pt%1 inch =  0.3515 mm 标题离页眉的距离
 \lhead{\today}%左页眉是今天的日期
 \rhead{\includegraphics[width=2cm]{icon.png}}%右页眉是学校logo
 \lfoot{}%左页尾
@@ -138,7 +141,7 @@ innertopmargin=\topskip,
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Begin now with title page!
+%% Begin now with front page!
 \begin{document}
 \begin{titlepage}
     \begin{center}
@@ -176,61 +179,130 @@ innertopmargin=\topskip,
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Start the assignment now!
+%% ToC
+\newpage
+{
+  \hypersetup{linkcolor=black}
+  \tableofcontents
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% New problem
+%% Start the assignment now!
 \newpage
 
-\subsubsection*{The following will give you an overview of what you can do with this template.}
+\section{Poisson image editing}
+The mathematical tool at the heart of the approach is the Poisson partial differential equation with Dirichlet boundary conditions which specifies the Laplacian of an unknown function over the domain of interest, along with the unknown function values over the boundary of the domain.
 
-\begin{Problem}
-Type your problem here. \\
-Personally I recommend Mathpix (https://mathpix.com/), which can easily export your ProblemBook.pdf to \LaTeX \ code.
-\end{Problem}
-
-\begin{Solution}
-Write your solution here.
-
-Example of equations. $x+1=2$. Or
-$$x-1=0$$
-
-Example of a list of equations.
-\begin{align*}
-    x &= 1\\
-    y &= 2
-\end{align*}
-
-Example of a matrix.
-$$\begin{pmatrix}1&0\\0&1\end{pmatrix}$$
-
-Example of a lemma.
-\begin{lemma}
-    This is a lemma.
-\end{lemma}
-
-Example of a proof.
-\begin{proof}
-    Write your proof here.
-\end{proof}
-
-Example of including a picture.
+Solving the Poisson equation also has an alternative interpretation as a minimization problem: it computes the function whose gradient is the closest, in the L2-norm, to some prescribed vector field — the guidance vector field — under given boundary conditions. In that way, the reconstructed function interpolates the boundary conditions inwards, while following the spatial variations of the guidance field as closely as possible.
+\section{Mathematical theory}
+\subsection{Poisson solution to guided interpolation}
+As it is enough to solve the interpolation problem for each color component separately, we consider only scalar image functions. 
+\subsubsection{Notations}
 \begin{center}
-    \includegraphics[width = 4cm]{icon.png}
+    \includegraphics[width = 10cm]{notation.jpg}
 \end{center}
 
-Example of referring to a piece of code.
-\lstinputlisting[language = python]{Program Solution.py}
+let S, a closed subset of R2, be the image definition domain, and let Ω be a closed subset of S with boundary ∂Ω. Let $f^∗$  be a known scalar function defined over S minus the interior of Ω and let f be an unknown scalar function defined over the interior of Ω. Finally, let v be a vector field defined over Ω.
+\subsubsection{Membrane interpolation}
+ the solution of the minimization problem:
+ \begin{equation}
+      \min _f \iint_{\Omega}|\nabla f|^2 \text { with }\left.f\right|_{\partial \Omega}=f^* \mid \partial \Omega,
+ \end{equation}
+ where $\nabla .=\left[\frac{\partial .}{\partial x}, \frac{\partial}{\partial y}\right]$ is the gradient operator. The minimizer must satisfy the associated Euler-Lagrange equation
+ \begin{equation}
+     \Delta f=0 \text { over } \Omega \text { with }\left.f\right|_{\partial \Omega}=\left.f^*\right|_{\partial \Omega},
+ \end{equation}
+ where $\Delta .=\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}$is the Laplacian operator.
+ \subsubsection{Minimization with a guidance field}
+ an extended version of the above minimization:
+ \begin{equation}
+     \min _f \iint_{\Omega}|\nabla f-\mathbf{v}|^2 \text { with }\left.f\right|_{\partial \Omega}=\left.f^*\right|_{\partial \Omega},
+ \end{equation}
+ whose solution is the unique solution of the following Poisson equation with Dirichlet boundary conditions:
+ \begin{equation}
+     \Delta f=\operatorname{div} \mathbf{v} \text { over } \Omega, \text { with }\left.f\right|_{\partial \Omega}=\left.f^*\right|_{\partial \Omega},
+ \end{equation}
+ where $\operatorname{div} \mathbf{v}=\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}$ is the divergence of $\mathbf{v}=(u, v)$.
+ This is the fundamental machinery of Poisson editing of color images: three Poisson equations of the form (4) are solved independently in the three color channels of the chosen color space.
+\subsection{Discrete Poisson solver}
+For discrete images the problem can be discretized naturally using the underlying discrete pixel grid. For each pixel p in S, let $N_p$ be the set of its 4-connected neighbors which are in S, and let ⟨p,q⟩ denote a pixel pair such that q ∈$N_p$. The boundary of Ω is now $\partial \Omega=\{p \in S \backslash \Omega:N_p\cap\Omega\neq0\}$.
 
-Example of a table.
-\begin{equation*}\begin{tabular}{ c c c }
-                & Mean          & SD \\ 
-     Fall 2077  & 7.046512      & 1.714552 \\  
-     Fall 1977  & 9.102941      & 1.568919
-\end{tabular}\end{equation*}
-
-Overall, this is a quite basic template for assignments, and above are only some basic features. I included enough packages and set a few environments. You may modify them or add features to fit your personal preference. Enjoy using it!
-\end{Solution}
-
+The finite difference discretization of (3) yields the following discrete, quadratic optimization problem:
+\begin{equation}
+    \min _{\left.f\right|_{\Omega}} \sum_{\langle p, q\rangle \cap \Omega \neq \emptyset}\left(f_p-f_q-v_{p q}\right)^2, \text { with } f_p=f_p^* \text {, for all } p \in \partial \Omega.
+\end{equation}
+Its solution satisfies the following simultaneous linear equations:
+\begin{equation}
+    \text { for all } p \in \Omega, \quad\left|N_p\right| f_p-\sum_{q \in N_p \cap \Omega} f_q=\sum_{q \in N_p \cap \partial \Omega} f_q^*+\sum_{q \in N_p} v_{p q} .
+\end{equation}
+For pixels p interior to Ω, that is, Np ⊂ Ω, there are no boundary terms in the right hand side of (6), which reads:
+\begin{equation}
+    \left|N_p\right| f_p-\sum_{q \in N_p} f_q=\sum_{q \in N_p} v_{p q}
+\end{equation}
+\subsection{Seamless clone}
+\subsubsection{Importing gradients}
+The basic choice for the guidance field v is a gradient field taken directly from a source image. 
+\begin{equation}
+    \Delta f=\Delta g \text { over } \Omega, \text { with }\left.f\right|_{\partial \Omega}=\left.f^*\right|_{\partial \Omega}
+\end{equation}
+As for the numerical implementation, the continuous specification (8) translates into
+\begin{equation}
+    for\,all <p,q>, v_{pq}=g_p-g_q
+\end{equation}
+which is to be plugged into (6).
+\subsubsection{Mixing gradients}
+ No trace of the destination image $f^∗$ is kept inside Ω with directly importing gradients, but there are situations where it is desirable to combine properties of $f^∗$ with those of g, for example to add objects with holes, or partially transparent ones, on top of a textured or cluttered background.
+ 
+ As a result, at each point of Ω, we retain the stronger of the variations in $f^∗$ or in g, using the following guidance field:
+ \begin{equation}
+     \text { for all } \mathbf{x} \in \Omega, \mathbf{v}(\mathbf{x})= \begin{cases}\nabla f^*(\mathbf{x}) & \text { if }\left|\nabla f^*(\mathbf{x})\right|>|\nabla g(\mathbf{x})| \\ \nabla g(\mathbf{x}) & \text { otherwise. }\end{cases}.
+ \end{equation}
+ The discrete counterpart of this guidance field is:
+ \begin{equation}
+     v_{p q}= \begin{cases}f_p^*-f_q^* & \text { if }\left|f_p^*-f_q^*\right|>\left|g_p-g_q\right| \\ g_p-g_q & \text { otherwise }\end{cases}.
+ \end{equation}
+ \section{Experiment results}
+ \subsection{Test-case 1: Cloning Kendall's face onto Kim's }
+ \begin{figure}[h]
+     \centering
+     \includegraphics[width=0.9\textwidth]{progress_import_Kardashian.jpg}
+     \caption{This is a picture of the progress of cloning Kendall's face onto Kim's using Poisson Image Editing by directly importing gradients.}
+     \label{fig:my_label}
+ \end{figure}
+ \subsection{Test-case 2: Cloning a strawberry onto a chocolate milk shake }
+ \begin{figure}[H]
+     \centering
+     \includegraphics[width=0.9\textwidth]{progress_import_strawberry Milk Shake.jpg}
+     \caption{This is a picture of the progress of cloning a strawberry onto a chocolate milk shake using Poisson Image Editing by directly importing gradients.}
+     \label{fig:my_label}
+ \end{figure}
+ \subsection{Test-case 3: Cloning Ginevra de' Benci's face onto Monna Lisa’s}
+ \begin{figure}[H]
+     \centering
+     \includegraphics[width=0.9\textwidth]{progress_import_monna.png}
+     \caption{This is a picture of the progress of cloning Ginevra de' Benci's face onto Monna Lisa's using Poisson Image Editing by directly importing gradients.}
+     \label{fig:my_label}
+ \end{figure}
+ \subsection{Test-case 4: Inserting object with holes}
+ \begin{figure}[H]
+     \centering
+     \includegraphics[width=0.9\textwidth]{merged_result_mix.png}
+     \caption{This is a picture of the progress of inserting objects with hole using Poisson Image Editing by mixing gradients.}
+     \label{fig:my_label}
+ \end{figure}
+  \begin{figure}[H]
+     \centering
+     \includegraphics[width=0.9\textwidth]{merged_result_import.png}
+     \caption{This is a picture of the progress of inserting objects with hole using Poisson Image Editing by directly importing gradients.}
+     \label{fig:my_label}
+ \end{figure}
+ \subsection{Test-case 5:Replacing a doughnut with hamburger}
+ \begin{figure}[H]
+     \centering
+     \includegraphics[width=1.1\textwidth]{progress_import.jpg}
+     \caption{This is a picture of the progress of replacing a doughnut with hamburger using Poisson Image Editing by mixing gradients.}
+     \label{fig:my_label}
+ \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Complete the assignment now
 \end{document}
